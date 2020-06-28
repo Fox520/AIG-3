@@ -1,6 +1,27 @@
-p1_strats = [[5, 4], [3, 3], [2, 4], [4, 5]]
+function input(prompt::AbstractString="")
+    print(prompt)
+    return parse(Int64, chomp(readline()))
+end
 
-p2_strats = [[2, 1, 1, 3], [2, 2, 1, 4]]
+function input_special(prompt::AbstractString="")
+    print(prompt)
+    s = split(chomp(readline()), ",")
+    return parse.(Int64, s)
+end
+# Capture strategies for first player
+p1_strats = []
+for i in 1:input("How many strategies for player 1:")
+    push!(p1_strats, input_special("Enter strategy $i: "))
+end
+println()
+# Capture strategies for second player
+p2_strats = []
+for i in 1:input("How many strategies for player 2:")
+    push!(p2_strats, input_special("Enter strategy $i: "))
+end
+
+# p1_strats = [[5, 4], [3, 3], [2, 4], [4, 5]]
+# p2_strats = [[2, 1, 1, 3], [2, 2, 1, 4]]
 
 # Returns bool
 function is_a_strictly_dominant(a, b)
@@ -118,7 +139,6 @@ function get_dominated_strategies(strategies)
     return dominated_strategies
 end
 
-
 println("Player 1 findings:")
 # Strictly dominant
 strictly_index = strictly_dominate_strategy(p1_strats)
@@ -147,9 +167,6 @@ else
     output_dominated = dominated_strats
 end
 println("Dominated strategies: ", output_dominated)
-
-# print(weakly_dominate_strategy(p2_strats))
-# print(get_dominated_strategies(p1_strats))
 
 println()
 println("Player 2 findings:")
