@@ -51,6 +51,16 @@ function is_a_weakly_dominant(a, b)
     end
 end
 
+function make_unique(arr)
+    used = []
+    for i in 1:size(arr)[1]
+        if !(arr[i] in used)
+            push!(used, arr[i])
+        end
+    end
+    return used
+end
+
 # Returns bool
 function is_a_fully_dominated(a, b)
     counts = 0
@@ -71,6 +81,7 @@ end
 function strictly_dominate_strategy(strategies)
     strong_index = -1
     for i in 1:size(strategies)[1]
+        println("Iteration No. $i")
         row = strategies[i]
         # Compare with other strategies but exclude self first
         temp_strategies = deepcopy(strategies)
@@ -81,9 +92,12 @@ function strictly_dominate_strategy(strategies)
             if is_a_strictly_dominant(row, temp_row) == true
                 if strong_index == -1
                     strong_index = i
+                    println(row, " is strictly dominant over ", temp_row)
                 elseif is_a_strictly_dominant(row, strategies[strong_index]) == true
                     strong_index = i
+                    println("[reset] ",row, " is strictly dominant over ", strategies[strong_index])
                 else
+                    println("[reset]", row, " is not strictly dominant over ", strategies[strong_index])
                     strong_index = -1
                 end
             end
@@ -95,8 +109,9 @@ end
 # 2. Find the weakly dominant strategy
 # Returns: int, the index
 function weakly_dominate_strategy(strategies)
-    weak_index = -1
+    weak_index = []
     for i in 1:size(strategies)[1]
+        println("Iteration No. $i")
         row = strategies[i]
         # Compare with other strategies excluding self
         temp_strategies = deepcopy(strategies)
@@ -105,13 +120,8 @@ function weakly_dominate_strategy(strategies)
             temp_row = temp_strategies[j]
             # Check if we are weakly dominant
             if is_a_weakly_dominant(row, temp_row) == true
-                if weak_index == -1
-                    weak_index = i
-                elseif is_a_strictly_dominant(row, strategies[weak_index]) == true
-                    weak_index = i
-                else
-                    weak_index = -1
-                end
+                push!(weak_index, i)
+                println(strategies[i], " is weakly dominant over ", temp_row)
             end
         end
     end
@@ -123,6 +133,7 @@ end
 function get_dominated_strategies(strategies)
     dominated_strategies = []
     for i in 1:size(strategies)[1]
+        println("Iteration No. $i")
         row = strategies[i]
         # Compare with other strategies excluding self
         temp_strategies = deepcopy(strategies)
@@ -131,6 +142,7 @@ function get_dominated_strategies(strategies)
             temp_row = temp_strategies[j]
             # Check if row is dominated
             if is_a_fully_dominated(row, temp_row) == true
+                println(row, " is dominated by ", temp_row)
                 push!(dominated_strategies,strategies[i])
                 break
             end
@@ -140,6 +152,8 @@ function get_dominated_strategies(strategies)
 end
 
 println("Player 1 findings:")
+println()
+println("-----------------Strictly dominant Strategy------------")
 # Strictly dominant
 strictly_index = strictly_dominate_strategy(p1_strats)
 # Watch out for BoundsError incase no result is found
@@ -148,17 +162,23 @@ if strictly_index == -1
 else
     output_strictly = p1_strats[strictly_index]
 end
-println("Strictly dominant strategy: ", output_strictly)
-
+println("∴ final result => ", output_strictly)
+println()
+println("-----------------Weakly dominant Strategy------------")
 # Weakly dominant
-weakly_index = weakly_dominate_strategy(p1_strats)
-if weakly_index == -1
+weakly_index = make_unique(weakly_dominate_strategy(p1_strats))
+if weakly_index == []
     output_weakly = "None found"
 else
-    output_weakly = p1_strats[weakly_index]
+    output_weakly = []
+    for i in 1:size(weakly_index)[1]
+        push!(output_weakly, p1_strats[weakly_index[i]])
+    end
+#     output_weakly = p1_strats[weakly_index]
 end
-println("Weakly dominant strategy: ", output_weakly)
-
+println("∴ final result => ", output_weakly)
+println()
+println("-----------------Dominated Strategies------------")
 # Dominated
 dominated_strats = get_dominated_strategies(p1_strats)
 if dominated_strats == []
@@ -166,10 +186,11 @@ if dominated_strats == []
 else
     output_dominated = dominated_strats
 end
-println("Dominated strategies: ", output_dominated)
+println("∴ final result => ", output_dominated)
 
-println()
 println("Player 2 findings:")
+println()
+println("-----------------Strictly dominant Strategy------------")
 # Strictly dominant
 strictly_index = strictly_dominate_strategy(p2_strats)
 # Watch out for BoundsError incase no result is found
@@ -178,17 +199,22 @@ if strictly_index == -1
 else
     output_strictly = p2_strats[strictly_index]
 end
-println("Strictly dominant strategy: ", output_strictly)
-
+println("∴ final result => ", output_strictly)
+println()
+println("-----------------Weakly dominant Strategy------------")
 # Weakly dominant
-weakly_index = weakly_dominate_strategy(p2_strats)
-if weakly_index == -1
+weakly_index = make_unique(weakly_dominate_strategy(p2_strats))
+if weakly_index == []
     output_weakly = "None found"
 else
-    output_weakly = p2_strats[weakly_index]
+    output_weakly = []
+    for i in 1:size(weakly_index)[1]
+        push!(output_weakly, p2_strats[weakly_index[i]])
+    end
 end
-println("Weakly dominant strategy: ", output_weakly)
-
+println("∴ final result => ", output_weakly)
+println()
+println("-----------------Dominated Strategies------------")
 # Dominated
 dominated_strats = get_dominated_strategies(p2_strats)
 if dominated_strats == []
@@ -196,4 +222,4 @@ if dominated_strats == []
 else
     output_dominated = dominated_strats
 end
-println("Dominated strategies: ", output_dominated)
+println("∴ final result => ", output_dominated)
