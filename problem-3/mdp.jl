@@ -63,7 +63,7 @@ end
 # push!(s2.transitions, [s1, 1.0])
 # push!(s2.transitions, [s2, 1.0])
 
-states = all_states #[s1, s2]
+states = deepcopy(all_states) #[s1, s2]
 function get_max_transitions(transitions)
     results = []
     if size(transitions)[1] > 1
